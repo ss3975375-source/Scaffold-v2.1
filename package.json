@@ -1,31 +1,35 @@
 {
-  "name": "relay-backend",
-  "version": "2.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
-    "db:migrate": "node src/db/migrate.js",
-    "db:init": "node src/db/migrate.js",
-    "test": "node --test",
-    "lint": "node --check src/index.js"
-  },
+  "name": "relay-mobile",
+  "version": "1.0.0",
+  "main": "index.js",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.859.0",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.0.1",
-    "google-auth-library": "^11.0.2",
-    "helmet": "^8.3.0",
-    "jsonwebtoken": "^9.0.3",
-    "pg": "^8.23.0",
-    "socket.io": "^4.8.3",
-    "zod": "^4.0.10",
-    "multer": "^2.0.2"
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/space-grotesk": "^0.4.1",
+    "@react-navigation/native": "^7.3.17",
+    "@react-navigation/native-stack": "^7.18.9",
+    "expo": "~57.0.15",
+    "expo-auth-session": "^57.0.8",
+    "expo-font": "^57.0.1",
+    "expo-secure-store": "^57.0.1",
+    "expo-splash-screen": "^57.0.7",
+    "expo-status-bar": "~57.0.1",
+    "expo-web-browser": "^57.0.2",
+    "react": "19.2.3",
+    "react-native": "0.86.2",
+    "react-native-safe-area-context": "^5.9.1",
+    "react-native-screens": "^4.27.0",
+    "socket.io-client": "^4.8.3",
+    "tweetnacl": "^1.0.3",
+    "base64-js": "^1.5.1",
+    "expo-document-picker": "~57.0.1",
+    "expo-notifications": "~57.0.8",
+    "expo-file-system": "~57.0.1"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  }
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
 }
