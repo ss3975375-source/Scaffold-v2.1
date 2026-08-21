@@ -1,0 +1,31 @@
+{
+  "name": "relay-backend",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "db:migrate": "node src/db/migrate.js",
+    "db:init": "node src/db/migrate.js",
+    "test": "node --test",
+    "lint": "node --check src/index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.859.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.0.1",
+    "google-auth-library": "^11.0.2",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0",
+    "socket.io": "^4.8.3",
+    "zod": "^4.0.10",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
