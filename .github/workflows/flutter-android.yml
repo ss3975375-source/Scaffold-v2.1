@@ -3,7 +3,11 @@ name: Flutter Android build
 on:
   workflow_dispatch:
   push:
-    branches: [foundation-v1.1]
+    branches:
+      - foundation-v1.1
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -21,8 +25,11 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Show Flutter version
+        run: flutter --version
+
       - name: Generate Flutter platform files
-        run: flutter create --platforms=android,web .
+        run: flutter create --platforms=android,windows .
 
       - name: Get dependencies
         run: flutter pub get
@@ -30,7 +37,10 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Build APK
+      - name: Test
+        run: flutter test
+
+      - name: Build debug APK
         run: flutter build apk --debug
 
       - name: Upload debug APK
@@ -38,3 +48,4 @@ jobs:
         with:
           name: ultimate-privacy-debug-apk
           path: client/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
