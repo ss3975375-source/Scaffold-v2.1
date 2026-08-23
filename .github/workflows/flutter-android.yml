@@ -1,0 +1,40 @@
+name: Flutter Android build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [foundation-v1.1]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Flutter platform files
+        run: flutter create --platforms=android,web .
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Build APK
+        run: flutter build apk --debug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ultimate-privacy-debug-apk
+          path: client/build/app/outputs/flutter-apk/app-debug.apk
