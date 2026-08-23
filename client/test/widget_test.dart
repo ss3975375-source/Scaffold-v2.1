@@ -7,7 +7,7 @@ void main() {
     await tester.pumpWidget(const UltimateApp());
 
     expect(find.text('Foundation build'), findsOneWidget);
-    expect(find.text('Not checked'), findsOneWidget);
+    expect(find.text('Backend status: Not checked'), findsOneWidget);
     expect(find.text('Check API'), findsOneWidget);
   });
 }
