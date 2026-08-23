@@ -1,0 +1,15 @@
+name: ultimate_privacy
+description: Privacy-first communication and file sharing client.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.7.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.5.0
+
+flutter:
+  uses-material-design: true
