@@ -1,0 +1,60 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or commit to build
+        required: true
+        default: foundation-v1.1
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout selected ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android platform files
+        working-directory: client
+        run: flutter create --platforms=android --project-name ultimate_privacy .
+
+      - name: Get dependencies
+        working-directory: client
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: client
+        run: flutter analyze
+
+      - name: Build debug APK
+        working-directory: client
+        run: flutter build apk --debug
+
+      - name: Verify APK
+        run: test -f client/build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ultimate-privacy-debug-apk
+          path: client/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
