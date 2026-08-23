@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'core/config/app_config.dart';
+import 'core/network/api_client.dart';
+
 void main() {
   runApp(const UltimateApp());
 }
@@ -21,8 +24,51 @@ class UltimateApp extends StatelessWidget {
   }
 }
 
-class FoundationScreen extends StatelessWidget {
+class FoundationScreen extends StatefulWidget {
   const FoundationScreen({super.key});
+
+  @override
+  State<FoundationScreen> createState() => _FoundationScreenState();
+}
+
+class _FoundationScreenState extends State<FoundationScreen> {
+  late final ApiClient _api;
+  String _status = 'Not checked';
+  bool _checking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _api = ApiClient(baseUrl: AppConfig.development.apiBaseUrl);
+  }
+
+  @override
+  void dispose() {
+    _api.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkApi() async {
+    setState(() {
+      _checking = true;
+      _status = 'Checking…';
+    });
+
+    try {
+      final health = await _api.checkHealth();
+      if (!mounted) return;
+      setState(() {
+        _status = 'Online — ${health.service} ${health.version}';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _status = 'Unavailable';
+      });
+    } finally {
+      if (mounted) setState(() => _checking = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +87,14 @@ class FoundationScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              const Text(
-                'The application foundation is ready. Backend connectivity will be connected in the next client milestone.',
+              Text(
+                'Backend status: $_status',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: () {},
-                child: const Text('Check API'),
+                onPressed: _checking ? null : _checkApi,
+                child: Text(_checking ? 'Checking…' : 'Check API'),
               ),
             ],
           ),
