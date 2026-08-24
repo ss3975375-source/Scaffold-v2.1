@@ -43,6 +43,16 @@ jobs:
       - name: Build debug APK
         run: flutter build apk --debug
 
+      - name: Record Android identity
+        shell: bash
+        run: |
+          echo "=== Android application ID ==="
+          grep -R "applicationId" android/app/build.gradle android/app/build.gradle.kts 2>/dev/null || true
+          echo "=== Debug signing report ==="
+          chmod +x android/gradlew
+          cd android
+          ./gradlew signingReport
+
       - name: Verify APK
         run: test -f build/app/outputs/flutter-apk/app-debug.apk
 
