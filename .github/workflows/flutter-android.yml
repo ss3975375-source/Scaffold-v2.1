@@ -37,6 +37,13 @@ jobs:
         working-directory: client
         run: flutter create --platforms=android --project-name ultimate_privacy .
 
+      - name: Record Android identity
+        working-directory: client
+        run: |
+          echo "Android package/application id: com.example.ultimate_privacy"
+          echo "Debug signing SHA-1:"
+          keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android | grep -i 'SHA1:'
+
       - name: Get dependencies
         working-directory: client
         run: flutter pub get
