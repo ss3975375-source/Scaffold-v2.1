@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'google_auth_service.dart';
 
@@ -26,10 +27,15 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _message = 'Signed in as ${account.displayName ?? account.email}';
       });
+    } on GoogleSignInException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _message = 'Google sign-in error: ${error.code}\n${error.description ?? 'No additional details.'}';
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() {
-        _message = 'Google sign-in is not configured yet.';
+        _message = 'Google sign-in error: $error';
       });
     } finally {
       if (mounted) setState(() => _busy = false);
