@@ -3,11 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ultimate_privacy/main.dart';
 
 void main() {
-  testWidgets('foundation screen renders', (WidgetTester tester) async {
+  testWidgets('Google login screen renders', (WidgetTester tester) async {
     await tester.pumpWidget(const UltimateApp());
 
-    expect(find.text('Foundation build'), findsOneWidget);
-    expect(find.text('Backend status: Not checked'), findsOneWidget);
-    expect(find.text('Check API'), findsOneWidget);
+    expect(find.text('Ultimate Privacy'), findsOneWidget);
+    expect(
+      find.text(
+        'Private communication and file sharing, designed around security and user control.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Continue with Google'), findsOneWidget);
   });
 }
