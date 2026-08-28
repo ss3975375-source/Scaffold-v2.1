@@ -1,16 +1,16 @@
 import 'package:google_sign_in/google_sign_in.dart';
 class GoogleAuthService {
   GoogleAuthService({this.serverClientId = _serverClientId});
-  // OAuth client ID for the Ultimate Privacy Backend web application.
-  // This is an identifier, not a secret. Backend secrets must never be placed
-  // in the Android application.
-  static const String _serverClientId ='589049623901-ec6qdthtuvegmoh2gsce2iiunu3tu7p5.apps.googleusercontent.com';
+  // Web OAuth client ID.
+  static const String _serverClientId = '589049623901-054sbagiiqabcogo5l8kn5adudspc3hk.apps.googleusercontent.com';
   final String? serverClientId;
   final GoogleSignIn _signIn = GoogleSignIn.instance;
   bool _initialized = false;
   Future<void> initialize() async {
     if (_initialized) return;
-    await _signIn.initialize(serverClientId: serverClientId);
+    await _signIn.initialize(
+      serverClientId: serverClientId,
+    );
     _initialized = true;
   }
   Future<GoogleSignInAccount> authenticate() async {
