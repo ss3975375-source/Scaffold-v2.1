@@ -1,4 +1,4 @@
-name: Flutter Android build
+name: SDS-DB Android build
 
 on:
   workflow_dispatch:
@@ -28,13 +28,14 @@ jobs:
       - name: Show Flutter version
         run: flutter --version
 
-      - name: Generate Flutter platform files
-        run: flutter create --platforms=android,windows .
+      - name: Generate Flutter Android platform files
+        run: flutter create --platforms=android .
 
-      # Google OAuth for Android is tied to the package name AND the signing
-      # certificate SHA-1. GitHub-hosted runners are ephemeral, so their
-      # automatically generated debug.keystore can change between runs.
-      # Restore one stable debug keystore from a repository Actions secret.
+      - name: Set Android application label
+        run: sed -i 's/android:label="[^"]*"/android:label="SDS-DB"/' android/app/src/main/AndroidManifest.xml
+
+      # Google OAuth for Android is tied to the package name and signing certificate SHA-1.
+      # GitHub-hosted runners are ephemeral, so restore one stable debug keystore.
       - name: Restore stable Android debug keystore
         env:
           ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
@@ -42,18 +43,13 @@ jobs:
           set -euo pipefail
           if [ -z "${ANDROID_DEBUG_KEYSTORE_BASE64}" ]; then
             echo "::error::ANDROID_DEBUG_KEYSTORE_BASE64 is not configured."
-            echo "Create the stable debug keystore once and add its base64 value as a repository Actions secret."
-            echo "See docs/GOOGLE_SIGNIN_CI_SETUP.md"
+            echo "Create the stable debug keystore and add its base64 value as a repository Actions secret."
             exit 1
           fi
           mkdir -p "$HOME/.android"
           printf '%s' "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 --decode > "$HOME/.android/debug.keystore"
           chmod 600 "$HOME/.android/debug.keystore"
-          keytool -list -v \
-            -keystore "$HOME/.android/debug.keystore" \
-            -alias androiddebugkey \
-            -storepass android \
-            -keypass android > "$GITHUB_WORKSPACE/android-signing-report.txt"
+          keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android > "$GITHUB_WORKSPACE/android-signing-report.txt"
           grep -E 'Alias name:|SHA1:|SHA256:' "$GITHUB_WORKSPACE/android-signing-report.txt" || true
 
       - name: Get dependencies
@@ -65,7 +61,7 @@ jobs:
       - name: Test
         run: flutter test
 
-      - name: Build debug APK
+      - name: Build SDS-DB debug APK
         run: flutter build apk --debug
 
       - name: Verify Android identity and APK certificate
@@ -74,44 +70,31 @@ jobs:
           set -euo pipefail
           APK="build/app/outputs/flutter-apk/app-debug.apk"
           test -f "$APK"
-
           echo "=== Android application ID ==="
           grep -R "applicationId" android/app/build.gradle android/app/build.gradle.kts 2>/dev/null || true
-
-          echo "=== Gradle signing report ==="
-          chmod +x android/gradlew
-          (
-            cd android
-            ./gradlew signingReport
-          ) | tee "$GITHUB_WORKSPACE/gradle-signing-report.txt"
-
-          echo "=== SHA-1 from APK ==="
+          echo "=== APK SHA-1 ==="
           keytool -printcert -jarfile "$APK" | tee "$GITHUB_WORKSPACE/apk-certificate.txt"
-
           APK_SHA1=$(keytool -printcert -jarfile "$APK" | awk -F': ' '/SHA1:/{print $2; exit}')
           KEY_SHA1=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -alias androiddebugkey -storepass android -keypass android | awk -F': ' '/SHA1:/{print $2; exit}')
-
           echo "Keystore SHA-1: $KEY_SHA1"
           echo "APK SHA-1:      $APK_SHA1"
-
           if [ -z "$APK_SHA1" ] || [ -z "$KEY_SHA1" ] || [ "$APK_SHA1" != "$KEY_SHA1" ]; then
             echo "::error::APK was not signed with the restored stable debug keystore."
             exit 1
           fi
 
-      - name: Upload debug APK
+      - name: Upload SDS-DB debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: ultimate-privacy-debug-apk
+          name: sds-db-debug-apk
           path: client/build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
 
       - name: Upload Google sign-in diagnostics
         uses: actions/upload-artifact@v4
         with:
-          name: google-signin-android-diagnostics
+          name: sds-db-google-signin-diagnostics
           path: |
             android-signing-report.txt
-            gradle-signing-report.txt
             apk-certificate.txt
           if-no-files-found: warn
