@@ -1,5 +1,5 @@
-name: ultimate_privacy
-description: Privacy-first communication and file sharing client.
+name: sds_db
+description: SDS-DB — privacy-first communication and secure file sharing application.
 publish_to: 'none'
 version: 0.1.0+1
 
