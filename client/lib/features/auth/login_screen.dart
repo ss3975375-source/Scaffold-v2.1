@@ -54,12 +54,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Icon(Icons.shield_outlined, size: 76),
                 const SizedBox(height: 24),
                 const Text(
-                  'Ultimate Privacy',
+                  'SDS-DB',
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Private communication and file sharing, designed around security and user control.',
+                  'Private communication and secure file sharing, designed around security and user control.',
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
